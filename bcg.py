@@ -33,7 +33,7 @@ if __name__ == "__main__":
 	t = t[500:2500]
 
 	z_detrend = scipy.signal.detrend(z, bp=range(0, len(z), 20))
-	f, P = scipy.signal.welch(z_detrend, 1 / np.mean(np.diff(t)) / 1000)
+	f, P = scipy.signal.welch(z_detrend, 1 / np.mean(np.diff(t)))
 
 	pylab.plot(t, z_detrend)
 	pylab.show()
