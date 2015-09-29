@@ -27,6 +27,11 @@ def readData(filename):
 
 	return np.array(x), np.array(y), np.array(z), np.array(t)/1000.0
 
+def lowpass(s, f):
+	b = scipy.signal.firwin(100, f)
+	return scipy.signal.lfilter(b, 1, s)
+
+
 if __name__ == "__main__":
 	x, y, z, t = readData(sys.argv[1])
 	z = scipy.signal.detrend(z[500:2500])
@@ -35,9 +40,20 @@ if __name__ == "__main__":
 	z_detrend = scipy.signal.detrend(z, bp=range(0, len(z), 20))
 	f, P = scipy.signal.welch(z_detrend, 1 / np.mean(np.diff(t)))
 
+	pylab.subplot(3, 1, 1)
 	pylab.plot(t, z_detrend)
-	pylab.show()
+	pylab.title("Detrended z-acceleration")
+	pylab.xlabel("t (s)")
 
+
+	pylab.subplot(3, 1, 2)
 	pylab.plot(f, P)
+	pylab.title("Welch freq estimation")
+	pylab.xlabel("f (Hz)")
+
+	pylab.subplot(3, 1, 3)
+	pylab.plot(t, lowpass(z_detrend**2, 0.1))
+	pylab.title("Squared and low passed signal for HR estimation")
+	pylab.xlabel("t (s)")
 	pylab.show()
 
